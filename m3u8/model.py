@@ -494,7 +494,8 @@ class Playlist(BasePathMixin):
             average_bandwidth=stream_info.get('average_bandwidth'),
             program_id=stream_info.get('program_id'),
             resolution=resolution_pair,
-            codecs=stream_info.get('codecs')
+            codecs=stream_info.get('codecs'),
+            frame_rate=stream_info.get('frame_rate'),
         )
         self.media = []
         for media_type in ('audio', 'video', 'subtitles'):
@@ -519,6 +520,8 @@ class Playlist(BasePathMixin):
             res = str(self.stream_info.resolution[
                       0]) + 'x' + str(self.stream_info.resolution[1])
             stream_inf.append('RESOLUTION=' + res)
+        if self.stream_info.frame_rate:
+            stream_inf.append('FRAME-RATE=%d' % self.stream_info.frame_rate)
         if self.stream_info.codecs:
             stream_inf.append('CODECS=' + quoted(self.stream_info.codecs))
 
@@ -565,7 +568,8 @@ class IFramePlaylist(BasePathMixin):
             average_bandwidth=None,
             program_id=iframe_stream_info.get('program_id'),
             resolution=resolution_pair,
-            codecs=iframe_stream_info.get('codecs')
+            codecs=iframe_stream_info.get('codecs'),
+            frame_rate=iframe_stream_info.get('frame_rate'),
         )
 
     def __str__(self):
@@ -580,6 +584,9 @@ class IFramePlaylist(BasePathMixin):
             res = (str(self.iframe_stream_info.resolution[0]) + 'x' +
                    str(self.iframe_stream_info.resolution[1]))
             iframe_stream_inf.append('RESOLUTION=' + res)
+        if self.iframe_stream_info.frame_rate:
+            iframe_stream_inf.append('FRAME-RATE=%d' %
+                                     self.iframe_stream_info.frame_rate)
         if self.iframe_stream_info.codecs:
             iframe_stream_inf.append('CODECS=' +
                                      quoted(self.iframe_stream_info.codecs))
@@ -588,9 +595,18 @@ class IFramePlaylist(BasePathMixin):
 
         return '#EXT-X-I-FRAME-STREAM-INF:' + ','.join(iframe_stream_inf)
 
+
 StreamInfo = namedtuple(
     'StreamInfo',
-    ['bandwidth', 'closed_captions', 'average_bandwidth', 'program_id', 'resolution', 'codecs']
+    [
+        'bandwidth',
+        'closed_captions',
+        'average_bandwidth',
+        'program_id',
+        'resolution',
+        'codecs',
+        'frame_rate',
+    ]
 )
 
 
